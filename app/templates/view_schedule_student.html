@@ -1,0 +1,180 @@
+<!-- view_schedule_student.html -->
+{% extends 'layout.html' %}
+
+{% block title %}View Schedule{% endblock %}
+
+{% block content %}
+<!-- Back Button -->
+<a href="{{ url_for('main.student_options') }}" class="back-button">
+    <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+</a>
+
+<h1>{{ student_name }}'s Weekly Schedule</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Time / Day</th>
+            {% for day in days %}
+                <th>{{ day }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for period in periods %}
+            <tr>
+                <td>{{ period }}</td>
+                {% for day in days %}
+                    <td>
+                        {% if schedule[day][period] %}
+                            {{ schedule[day][period].classroom }}<br>
+                            {{ schedule[day][period].course_name }}<br>
+                            <!-- Button to take attendance -->
+                            {% if (day, period) in attendance_status and attendance_status[(day, period)] %}
+                                <button class="btn btn-primary"
+                                    onclick="checkLocationAndRedirect('{{ url_for('main.check_student_location') }}', '{{ url_for('main.take_attendance', day=day, period=period) }}')">
+                                    Take Attendance Automatically
+                                </button>
+                                {% if student.manual_attendance_enabled %}  <!-- Check if manual attendance is enabled for the student -->
+                                    <!-- Button to take attendance manually -->
+                                    <button class="btn btn-secondary" data-toggle="modal" data-target="#gpsModal" onclick="setAttendanceUrls('{{ url_for('main.check_student_location') }}', '{{ url_for('main.take_attendance', day=day, period=period) }}')">
+                                        Take Attendance Manually
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            No class scheduled
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Modal for manual GPS input -->
+<div class="modal" id="gpsModal" tabindex="-1" role="dialog" aria-labelledby="gpsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gpsModalLabel">Enter GPS Coordinates</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="latitude">Latitude:</label>
+                    <input type="text" class="form-control" id="latitude" placeholder="Enter Latitude">
+                </div>
+                <div class="form-group">
+                    <label for="longitude">Longitude:</label>
+                    <input type="text" class="form-control" id="longitude" placeholder="Enter Longitude">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitGps">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let locationCheckUrl = '';
+    let redirectUrl = '';
+
+    function setAttendanceUrls(locationUrl, redirect) {
+        locationCheckUrl = locationUrl;
+        redirectUrl = redirect;
+    }
+
+    document.getElementById('submitGps').addEventListener('click', function () {
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+
+        if (latitude && longitude) {
+            fetch(locationCheckUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `latitude=${encodeURIComponent(latitude)}&longitude=${encodeURIComponent(longitude)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Location Check Data:', data);
+                if (data.status === 'success') {
+                    // Redirect to take attendance if location is valid
+                    window.location.href = redirectUrl;
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                alert('An error occurred while checking your location.');
+            });
+            $('#gpsModal').modal('hide'); // Hide the modal after submission
+        } else {
+            alert('Please enter both latitude and longitude.');
+        }
+    });
+
+    function checkLocationAndRedirect(locationUrl, redirectUrl) {
+        console.log('Location Check URL:', locationUrl);
+        console.log('Redirect URL:', redirectUrl);
+
+        if (navigator.geolocation) {
+            // Provide a message to the user
+            alert('Please allow location access to check your current location.');
+
+            navigator.geolocation.getCurrentPosition(function(position) {
+                console.log('Position:', position);
+
+                fetch(locationUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `latitude=${encodeURIComponent(position.coords.latitude)}&longitude=${encodeURIComponent(position.coords.longitude)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Location Check Data:', data);
+                    if (data.status === 'success') {
+                        // Redirect to take attendance if location is valid
+                        window.location.href = redirectUrl;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    alert('An error occurred while checking your location.');
+                });
+            }, function(error) {
+                console.error('Geolocation Error:', error);
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert('User denied the request for Geolocation. Please enable location services.');
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert('Location information is unavailable. Please check your settings.');
+                        break;
+                    case error.TIMEOUT:
+                        alert('The request to get user location timed out. Please try again.');
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        alert('An unknown error occurred. Please try again.');
+                        break;
+                }
+            });
+        } else {
+            alert('Geolocation is not supported by this browser. Please use a different browser or device.');
+        }
+    }
+</script>
+
+{% endblock %}

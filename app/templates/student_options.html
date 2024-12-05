@@ -1,0 +1,49 @@
+<!-- student_options.html -->
+{% extends 'layout.html' %}
+
+{% block title %}Student Options{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h2 class="display-4">Welcome, {{ current_user.username }}!</h2>
+            <hr class="my-4">
+            
+            {% if student %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Student Details</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>ID:</strong> {{ student.student_id }}</p>
+                    <p><strong>Name:</strong> {{ student.name }}</p>
+                    <p><strong>Batch:</strong> {{ student.batch }}</p>
+                    <p><strong>Department:</strong> {{ student.department }}</p>
+                    <p><strong>Semester:</strong> {{ student.semester }}</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <h4 class="mb-3">Choose an option:</h4>
+            <ul class="list-group">
+                {% if train_model_enabled %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.train_model_route') }}" class="btn btn-primary btn-block">
+                        <i class="fas fa-brain"></i> Tune Model
+                    </a>
+                </li>
+                {% endif %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.attendance') }}" class="btn btn-primary btn-block">
+                        <i class="fas fa-calendar-check"></i> View Attendance
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="{{ url_for('main.view_schedule_student', student_id=student.student_id) }}" class="btn btn-primary btn-block">
+                        <i class="fas fa-calendar-alt"></i> View Schedule
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

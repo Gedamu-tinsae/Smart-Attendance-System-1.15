@@ -1,0 +1,63 @@
+<!-- view_schedule_teacher.html -->
+{% extends 'layout.html' %}
+
+{% block title %}View Schedule{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="jumbotron">
+
+             <!-- Back Button -->
+<a href="{{ url_for('main.teacher_options') }}" class="back-button">
+    <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+</a>
+            <h1 class="display-4">Your Weekly Schedule</h1>
+            <hr class="my-4">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Time / Day</th>
+                            {% for day in days %}
+                                <th>{{ day }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for period in periods %}
+                            <tr>
+                                <td><strong>{{ period }}</strong></td>
+                                {% for day in days %}
+                                    <td>
+                                        {% if schedule[day][period] %}
+                                            {{ schedule[day][period] }}
+                                            <form method="POST" action="{{ url_for('main.toggle_attendance') }}" style="display:inline;">
+                                                <input type="hidden" name="day" value="{{ day }}">
+                                                <input type="hidden" name="period" value="{{ period }}">
+                                                
+                                                {% if (day, period) in attendance_status and attendance_status[(day, period)] %}
+                                                    <input type="hidden" name="status" value="OFF">
+                                                    <button type="submit" class="btn btn-warning btn-sm">
+                                                        <i class="fas fa-toggle-off"></i> Turn OFF Attendance
+                                                    </button>
+                                                {% else %}
+                                                    <input type="hidden" name="status" value="ON">
+                                                    <button type="submit" class="btn btn-success btn-sm">
+                                                        <i class="fas fa-toggle-on"></i> Turn ON Attendance
+                                                    </button>
+                                                {% endif %}
+                                            </form>
+                                        {% else %}
+                                            <span class="text-muted">No class scheduled</span>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

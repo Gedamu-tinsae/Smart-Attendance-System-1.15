@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Complete Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function toggleFields() {
+            var userType = document.getElementById('user_type').value;
+            var teacherFields = document.getElementById('teacher_fields');
+            var studentFields = document.getElementById('student_fields');
+            var adminFields = document.getElementById('admin_fields');
+
+            // Hide all fields initially
+            teacherFields.style.display = 'none';
+            studentFields.style.display = 'none';
+            adminFields.style.display = 'none';
+
+            // Show the relevant fields based on user type selection
+            if (userType === 'teacher') {
+                teacherFields.style.display = 'block';
+            } else if (userType === 'student') {
+                studentFields.style.display = 'block';
+            } else if (userType === 'admin') {
+                adminFields.style.display = 'block';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Complete Registration.</h2>
+        <form method="POST" action="{{ url_for('main.complete_registration') }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- User Type Selection -->
+            <div class="form-group">
+                <label for="user_type">Select User Type:</label>
+                {{ form.user_type(onchange="toggleFields()", id="user_type", class='form-control') }}
+            </div>
+
+            <!-- Teacher Fields -->
+            <div id="teacher_fields" style="display: none;">
+                <div class="form-group">
+                    {{ form.teacher_id.label }}
+                    {{ form.teacher_id(size=32, class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.teacher_name.label }}
+                    {{ form.teacher_name(size=32, class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.teacher_department.label }}
+                    {{ form.teacher_department(class='form-control') }}
+                </div>
+            </div>
+
+            <!-- Student Fields -->
+            <div id="student_fields" style="display: none;">
+                <div class="form-group">
+                    {{ form.student_id.label }}
+                    {{ form.student_id(size=32, class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.student_name.label }}
+                    {{ form.student_name(size=32, class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.student_department.label }}
+                    {{ form.student_department(class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.student_semester.label }}
+                    {{ form.student_semester(class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.student_batch.label }}
+                    {{ form.student_batch(class='form-control') }}
+                </div>
+            </div>
+
+            <!-- Admin Fields -->
+            <div id="admin_fields" style="display: none;">
+                <p>Admin does not require additional information.</p>
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+
+            <div class="form-group">
+                <p>Want to go back? <a href="{{ url_for('main.index') }}">Go to Home</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

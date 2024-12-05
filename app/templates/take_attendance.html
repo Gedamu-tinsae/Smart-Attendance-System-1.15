@@ -1,0 +1,84 @@
+<!-- take_attendance.html -->
+{% extends 'layout.html' %}
+
+{% block title %}Take Attendance{% endblock %}
+
+{% block content %}
+
+<!-- Back Button -->
+<a href="{{ url_for('main.student_options') }}" class="back-button">
+    <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+    </a>
+    
+    <h2>Take Attendance</h2>
+    <div class="container">
+        <p>Allow access to the camera:</p>
+        <video id="videoFeed" width="640" height="480" autoplay></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const video = document.getElementById('videoFeed');
+        const canvas = document.getElementById('canvas');
+        const resultsDiv = document.getElementById('results');
+    
+        // Initialize student ID and course name from server-side variables
+        const studentId = "{{ student_id }}";
+        const courseName = "{{ classroom }}";  // Use courseName instead of classroom
+    
+        console.log(`Student ID: ${studentId}`);
+        console.log(`Course Name: ${courseName}`);
+    
+        // Check if getUserMedia is supported
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    video.srcObject = stream;
+    
+                    // Start capturing images at regular intervals
+                    const captureInterval = setInterval(() => {
+                        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const imageData = canvas.toDataURL('image/jpeg');
+    
+                        // Ensure courseName is available
+                        if (!courseName) {
+                            resultsDiv.innerHTML = `<p>Course name is not available. Cannot take attendance.</p>`;
+                            clearInterval(captureInterval);
+                            return;
+                        }
+    
+                        // Send image data to the server for processing
+                        fetch('{{ url_for("main.process_attendance") }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ image_data: imageData, student_id: studentId, course_name: courseName })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                resultsDiv.innerHTML = `<p>Attendance successfully taken for ${data.student_name}.</p>`;
+                                clearInterval(captureInterval);  // Stop capturing images
+                                video.srcObject.getTracks().forEach(track => track.stop());  // Stop the camera
+                            } else {
+                                resultsDiv.innerHTML = `<p>${data.error || 'No match found. Continuing...'}</p>`;
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error capturing attendance:', error);
+                            resultsDiv.innerHTML = `<p>An error occurred. Please try again later.</p>`;
+                            clearInterval(captureInterval);  // Stop capturing images on error
+                        });
+                    }, 5000);  // Capture image every 5 seconds
+                })
+                .catch(function(error) {
+                    console.error('Error accessing the camera:', error);
+                    resultsDiv.innerHTML = `<p>Unable to access the camera. Please check your permissions.</p>`;
+                });
+        } else {
+            resultsDiv.innerHTML = `<p>Your browser does not support camera access. Please use a different browser.</p>`;
+        }
+    </script>    
+{% endblock %}

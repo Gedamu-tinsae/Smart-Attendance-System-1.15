@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Login</h2>
+
+        <!-- Email/Password login form -->
+        <form id="loginForm" method="POST" action="{{ url_for('main.login') }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(size=32, class='form-control') }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(size=32, class='form-control') }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.remember.label }}
+                {{ form.remember(class='form-check-input') }}
+            </div>
+
+            <!-- Login button for email/password -->
+            <div class="form-group">
+                <button type="submit" id="loginBtn" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+
+        <!-- Google login button -->
+        <div class="form-group">
+            <a href="{{ url_for('main.google_login') }}" class="btn btn-google">
+                <img src="{{ url_for('static', filename='images/google-logo.png') }}" alt="Google Logo" class="google-logo">
+                Log in with Google
+            </a>
+        </div>
+
+        <!-- Links to sign up and return to home -->
+        <div class="form-group">
+            <p>Don't have an account? <a href="{{ url_for('main.register') }}">Sign Up</a></p>
+        </div>
+        <div class="form-group">
+            <p>Want to go back? <a href="{{ url_for('main.index') }}">Go to Home</a></p>
+        </div>
+    </div>
+</body>
+</html>

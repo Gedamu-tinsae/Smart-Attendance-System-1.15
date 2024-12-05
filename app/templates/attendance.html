@@ -1,0 +1,74 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    View Attendance
+{% endblock %}
+
+{% block content %}
+
+<!-- Back Button -->
+<a href="{{ url_for('main.student_options') }}" class="back-button">
+    <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+    </a>
+    
+<div class="container mt-4">
+    <h1 class="mb-4">View Your Attendance</h1>
+    
+    <!-- Display attendance by course -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">By Course</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Course</th>
+                        <th>Total Classes</th>
+                        <th>Attended Classes</th>
+                        <th>Attendance Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course, data in course_attendance.items() %}
+                        <tr>
+                            <td>{{ course }}</td>
+                            <td>{{ data.total_classes }}</td>
+                            <td>{{ data.attended_classes }}</td>
+                            <td>{{ data.attendance_percentage }}%</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Debugging: Print course_attendance in the HTML -->
+    <!-- <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="card-title">Debugging Output</h2>
+        </div>
+        <div class="card-body">
+            <pre class="bg-light p-3 rounded">{{ course_attendance | tojson(indent=2) }}</pre>
+        </div>
+    </div> -->
+
+    <!-- Display attendance by date -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">By Date</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for record in attendance_records %}
+                    <li class="list-group-item">
+                        {{ record.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} - 
+                        {{ record.class_.name if record.class_ else 'Unknown Course' }} - 
+                        {% if record.present %} <span class="text-success">Present</span> {% else %} <span class="text-danger">Absent</span> {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

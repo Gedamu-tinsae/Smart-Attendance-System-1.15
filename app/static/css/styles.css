@@ -1,0 +1,319 @@
+/* fix footer at the bottom____ layout.html */
+
+html, body {
+    height: 100%;       /* Ensure the full height of the viewport is used */
+    margin: 0;          /* Remove default margins */
+    display: flex;
+    flex-direction: column; /* Arrange elements vertically */
+}
+
+main {
+    flex: 1;            /* Expand to fill available space */
+    padding-bottom: 20px; /* Optional: Add space above footer */
+}
+
+footer {
+    background-color: #343a40; /* Ensure consistency with navbar */
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+}
+/*-----------------------------------------*/
+
+
+
+/* Normalize or Reset Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Body and Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+}
+
+/* Center align form */
+.form-container {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f2f2f2;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style form inputs */
+.form-container input[type=text],
+.form-container input[type=email],
+.form-container input[type=password],
+.form-container select,
+.form-container textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px; /* Adjust font size for readability */
+}
+
+/* Style form submit button */
+.form-container button[type=submit] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px; /* Match input field font size */
+}
+
+.form-container button[type=submit]:hover {
+    background-color: #45a049;
+}
+
+/* Style form labels */
+.form-container label {
+    margin-bottom: 6px;
+    display: block;
+    font-weight: bold;
+}
+
+/* Style form header */
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px; /* Larger heading size */
+}
+
+/* Additional styles for form fields */
+.form-container .remember-me {
+    margin-top: 12px;
+}
+
+.form-container .form-group {
+    margin-bottom: 20px;
+}
+
+/* Center align content */
+.container {
+    width: 80%;
+    margin: 20px auto;
+    max-width: 1200px; /* Limit maximum width for larger screens */
+}
+
+/* Style headings */
+h1, h2, h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Style navigation links */
+.nav-links {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.nav-links a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+}
+
+.nav-links a:hover {
+    background-color: #ddd;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .form-container {
+        width: 100%;
+    }
+}
+
+/*----------------------------------------N----------------------------------------------*/
+/*------------------------------------------E--------------------------------------------*/
+/*--------------------------------------------W------------------------------------------*/
+
+#dashboard-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.btn {
+    margin: 10px;
+}
+
+form div {
+    margin-top: 20px;
+}
+
+label {
+    margin-right: 10px;
+}
+
+
+
+/* Styling for Google button */
+.btn-google {
+    margin-left: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4285F4;
+    color: white;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.google-logo {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.btn-google:hover {
+    background-color: #357ae8;
+    transform: scale(1.05);
+}
+
+.btn-google:active {
+    background-color: #2c5bbf;
+    transform: scale(1);
+}
+
+
+.form-group {
+    margin-bottom: 1rem; /* Adjust spacing between form groups */
+}
+
+.btn-custom {
+    background-color: #b6bec6; /* Replace with your preferred color */
+    color: white;
+    padding: 0.5rem 1rem; /* Adjust padding */
+    border: none; /* Remove border if necessary */
+    border-radius: 0.25rem; /* Round edges */
+    cursor: pointer; /* Change cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.btn-custom:hover {
+    background-color: #0056b3; /* Darker color on hover */
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /* Add any additional styling */
+}
+
+.btn-primary {
+    background-color: rgb(240, 185, 20); /* Example color */
+    color: rgb(255, 255, 255);           /* Text color */
+    margin: 20px 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(61, 140, 64);
+    padding: 15px 50px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    max-width: 100%;
+}
+
+/* this is for the sign up button only */
+.custom-btns {  
+    color: rgb(255, 255, 255);           /* Text color */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4CAF50;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px; /* Match input field font size */
+}
+
+.custom-btns:hover {
+    background-color: #45a049;
+}
+
+.btn-info:hover {
+    background-color: #2c7dd5;
+}
+.btn-info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 20px;
+    background-color: #d3c94a;
+}
+
+.btn-secondary:hover {
+    background-color: #2c7dd5;
+}
+
+
+
+
+
+/*back buttons */
+.back-button {
+    display: inline-flex; /* Aligns icon properly */
+    align-items: center; /* Center icon vertically */
+    justify-content: center; /* Center icon horizontally */
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White icon color */
+    padding: 10px 15px; /* Padding for the button */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* Remove underline from link */
+    transition: background-color 0.3s ease; /* Smooth transition */
+    margin-top: 20px; /* Space above the button */
+}
+
+.back-button i {
+    margin-right: 5px; /* Space between icon and text */
+}
+
+.back-button:hover {
+    background-color: #45a049; /* Darker shade on hover */
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script>
+        function toggleRegistrationFields() {
+            const registerType = document.getElementById('register_type').value;
+            const emailFields = document.getElementById('email_fields');
+            const googleFields = document.getElementById('google_fields');
+            const userTypeField = document.getElementById('user_type');
+            const additionalFields = document.getElementById('additional_fields');
+
+            if (registerType === 'google') {
+                emailFields.style.display = 'none';
+                googleFields.style.display = 'block';
+                userTypeField.style.display = 'none';
+                additionalFields.style.display = 'none';
+            } else {
+                emailFields.style.display = 'block';
+                googleFields.style.display = 'none';
+                userTypeField.style.display = 'block';
+                additionalFields.style.display = 'block';
+            }
+        }
+
+        function toggleFields() {
+            var userType = document.getElementById('user_type').value;
+            var teacherFields = document.getElementById('teacher_fields');
+            var studentFields = document.getElementById('student_fields');
+            var adminFields = document.getElementById('admin_fields');
+
+            if (userType === 'teacher') {
+                teacherFields.style.display = 'block';
+                studentFields.style.display = 'none';
+                adminFields.style.display = 'none';
+            } else if (userType === 'student') {
+                teacherFields.style.display = 'none';
+                studentFields.style.display = 'block';
+                adminFields.style.display = 'none';
+            } else if (userType === 'admin') {
+                teacherFields.style.display = 'none';
+                studentFields.style.display = 'none';
+                adminFields.style.display = 'block';
+            } else {
+                teacherFields.style.display = 'none';
+                studentFields.style.display = 'none';
+                adminFields.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize fields on page load
+            toggleRegistrationFields();
+            toggleFields();
+
+            // Event listeners
+            document.getElementById('user_type').addEventListener('change', toggleFields);
+            document.getElementById('register_type').addEventListener('change', toggleRegistrationFields);
+        });
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Register</h2>
+        <form method="POST" action="{{ url_for('main.register') }}" novalidate>
+            {{ form.hidden_tag() }}
+
+            <!-- Registration Type: Email or Google -->
+            <div class="form-group">
+                <label for="register_type">Register with:</label>
+                <select id="register_type" class="form-control" onchange="toggleRegistrationFields()">
+                    <option value="email">Email</option>
+                    <option value="google">Google</option>
+                </select>
+            </div>
+
+            <!-- Email and Password Fields -->
+            <div id="email_fields">
+                <div class="form-group">
+                    {{ form.email.label }}
+                    {{ form.email(size=32, class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label }}
+                    {{ form.password(size=32, class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ form.confirm_password.label }}
+                    {{ form.confirm_password(size=32, class='form-control') }}
+                </div>
+            </div>
+
+            <!-- Google Login Button -->
+            <div id="google_fields" style="display:none;">
+                <div class="form-group">
+                    <a href="{{ url_for('main.google_login') }}" class="btn btn-google">
+                        <img src="{{ url_for('static', filename='images/google-logo.png') }}" alt="Google Logo" class="google-logo">
+                        Sign Up with Google
+                    </a>
+                </div>
+            </div>
+
+            <!-- User Type: Teacher, Student, Admin -->
+            <div class="form-group">
+                <label for="user_type">Select User Type:</label>
+                {{ form.user_type(class='form-control', id='user_type', onchange='toggleFields()') }} <!-- Ensure id is set in your WTForms class -->
+            </div>
+
+            <div id="additional_fields">
+                <!-- Teacher Fields -->
+                <div id="teacher_fields" style="display: none;">
+                    <div class="form-group">
+                        {{ form.teacher_id.label }}
+                        {{ form.teacher_id(size=32, class='form-control') }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.teacher_name.label }}
+                        {{ form.teacher_name(size=32, class='form-control') }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.teacher_department.label }}
+                        {{ form.teacher_department() }}
+                    </div>
+                </div>
+
+                <!-- Student Fields -->
+                <div id="student_fields" style="display: none;">
+                    <div class="form-group">
+                        {{ form.student_id.label }}
+                        {{ form.student_id(size=32, class='form-control') }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.student_name.label }}
+                        {{ form.student_name(size=32, class='form-control') }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.student_department.label }}
+                        {{ form.student_department() }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.student_semester.label }}
+                        {{ form.student_semester() }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.student_batch.label }}
+                        {{ form.student_batch() }}
+                    </div>
+                </div>
+
+                <!-- Admin Fields -->
+                <div id="admin_fields" style="display: none;">
+                    <p>Admin does not require additional information.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form.submit() }}
+            </div>
+
+            <div class="form-group">
+                <p>Already have an account? <a href="{{ url_for('main.login') }}">Login</a></p>
+            </div>
+
+            <div class="form-group">
+                <p>Want to go back? <a href="{{ url_for('main.index') }}">Go to Home</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

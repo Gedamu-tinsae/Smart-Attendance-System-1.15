@@ -1,0 +1,321 @@
+{% extends 'layout.html' %} 
+
+{% block title %}
+    Admin - Attendance Visualizations
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron">
+        <div>
+            <a href="{{ url_for('main.view_all_student_attendance') }}" class="btn btn-primary btn-secondary mt-4">Back </a>
+        </div>
+        <h1 class="display-4">Attendance Statistics</h1>
+        <hr class="my-4">
+
+        <!-- Attendance by Course Plot -->
+        <h2>Attendance by Course</h2>
+        <canvas id="courseAttendanceChart" class="img-fluid" width="400" height="200"></canvas>
+
+        <!-- Attendance by Department Plot -->
+        <h2>Attendance by Department</h2>
+        <canvas id="departmentAttendanceChart" class="img-fluid" width="400" height="200"></canvas>
+
+        <!-- Students with Lowest Attendance -->
+        <h2 class="mt-5">Students with Lowest Attendance</h2>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Attendance Percentage</th>
+                </tr>
+            </thead>
+            <tbody id="lowAttendanceTable">
+                {% for student in low_attendance_data %}
+                <tr>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.name }}</td>
+                    <td>{{ student.attendance_percentage }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Low Attendance Courses -->
+        <h2 class="mt-5">Courses with Lowest Attendance</h2>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Course ID</th>
+                    <th>Course Name</th>
+                    <th>Attendance Percentage</th>
+                </tr>
+            </thead>
+            <tbody id="lowAttendanceCoursesTable">
+                {% for course in low_attendance_courses %}
+                <tr>
+                    <td>{{ course.class.id }}</td>
+                    <td>{{ course.class.name }}</td>
+                    <td>{{ course.attendance_rate }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Attendance by Distance -->
+        <h2 class="mt-5">Attendance by Distance from School</h2>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Attendance Percentage</th>
+                </tr>
+            </thead>
+            <tbody id="attendanceByDistanceTable">
+                {% for student_name, attendance in attendance_by_distance.items() %}
+                <tr>
+                    <td>{{ student_name }}</td>
+                    <td>{{ attendance }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Projected Attendance -->
+        <h2 class="mt-5">Projected Attendance for Course</h2>
+        <p>The projected attendance for the course is {{ projected_attendance }}% in the next 30 days.</p>
+
+        <!-- Historical Attendance Trend Plot -->
+        <h2>Historical Attendance Trend</h2>
+        <canvas id="attendanceTrendChart" class="img-fluid" width="400" height="200"></canvas>
+
+        <!-- Feature Usage Insights -->
+        <h2 class="mt-5">Feature Usage Insights</h2>
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Usage Count</th>
+                </tr>
+            </thead>
+            <tbody id="featureUsageTable">
+                {% for feature in feature_usage %}
+                <tr>
+                    <td>{{ feature.name }}</td>
+                    <td>{{ feature.usage_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Check data being passed from Flask
+    console.log("Courses:", {{ courses | tojson | safe }});
+    console.log("Attendance Percentages:", {{ attendance_percentages | tojson | safe }});
+    console.log("Departments:", {{ departments | tojson | safe }});
+    console.log("Department Attendance Percentages:", {{ dept_attendance_percentages | tojson | safe }});
+    console.log("Attendance Trend:", {{ attendance_trend | tojson | safe }});
+
+    // Prepare data for charts
+    const courseLabels = {{ courses | tojson }};
+    const courseData = {{ attendance_percentages | tojson }};
+    const departmentLabels = {{ departments | tojson }};
+    const departmentData = {{ dept_attendance_percentages | tojson }};
+    const trendLabels = {{ attendance_trend | tojson | map(attribute=0) }};
+    const trendData = {{ attendance_trend | tojson | map(attribute=1) }};
+
+    // Course Attendance Chart
+    const ctxCourse = document.getElementById('courseAttendanceChart').getContext('2d');
+    const courseAttendanceChart = new Chart(ctxCourse, {
+        type: 'bar',
+        data: {
+            labels: courseLabels,
+            datasets: [{
+                label: 'Attendance Percentage',
+                data: courseData,
+                backgroundColor: 'rgba(135, 206, 235, 0.6)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Attendance Percentage (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Courses'
+                    }
+                }
+            }
+        }
+    });
+
+    // Department Attendance Chart
+    const ctxDepartment = document.getElementById('departmentAttendanceChart').getContext('2d');
+    const departmentAttendanceChart = new Chart(ctxDepartment, {
+        type: 'bar',
+        data: {
+            labels: departmentLabels,
+            datasets: [{
+                label: 'Attendance Percentage',
+                data: departmentData,
+                backgroundColor: 'rgba(240, 128, 128, 0.6)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Attendance Percentage (%)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Departments'
+                    }
+                }
+            }
+        }
+    });
+
+    // Historical Attendance Trend Chart
+    const ctxTrend = document.getElementById('attendanceTrendChart').getContext('2d');
+    const attendanceTrendChart = new Chart(ctxTrend, {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [{
+                label: 'Attendance Count',
+                data: trendData,
+                backgroundColor: 'rgba(60, 179, 113, 0.6)',
+                borderColor: 'rgba(0, 0, 0, 0.2)',
+                borderWidth: 1,
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Attendance Count'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+<img src="data:image/png;base64,{{ course_plot_url }}" alt="Course Attendance Plot" class="img-fluid">
+<img src="data:image/png;base64,{{ department_plot_url }}" alt="Department Attendance Plot" class="img-fluid">
+
+<h2>Class Attendance Comparison</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Attendance Percentage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for comparison in class_attendance_comparison %}
+        <tr>
+            <td>{{ comparison.class_name }}</td>
+            <td>{{ comparison.attendance_percentage }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Teacher Performance</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Teacher Name</th>
+            <th>Average Class Attendance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for performance in teacher_performance %}
+        <tr>
+            <td>{{ performance.teacher_name }}</td>
+            <td>{{ performance.average_attendance }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Peak Attendance Times</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Time Slot</th>
+            <th>Attendance Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for time in peak_times %}
+        <tr>
+            <td>{{ time.slot }}</td>
+            <td>{{ time.count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h2>Late Comers</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Attendance Count</th>
+        </tr>
+    </thead>
+    <tbody id="lateComersTable">
+        {% for late_comer in late_comers %}
+        <tr>
+            <td>{{ late_comer.student_id }}</td>
+            <td>{{ late_comer.name }}</td>
+            <td>{{ late_comer.attendance_count }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+
+<!-- Back Button -->
+<a href="{{ url_for('main.view_all_student_attendance') }}" class="btn btn-primary btn-secondary mt-4">Back to Attendance Records</a>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Student Attendance
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="jumbotron">
+
+                         <!-- Back Button -->
+<a href="{{ url_for('main.teacher_options') }}" class="back-button">
+    <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+</a>
+            <h1 class="display-4">Student Attendance</h1>
+            <hr class="my-4">
+
+            <!-- Filter Form -->
+            <form method="get" action="{{ url_for('main.view_student_attendance') }}" class="mb-4">
+                <div class="form-row">
+                    <!-- Semester Filter -->
+                    <div class="form-group col-md-3">
+                        <label for="semester">Semester:</label>
+                        <select name="semester" id="semester" class="form-control">
+                            <option value="">All Semesters</option>
+                            {% for sem in semesters %}
+                                <option value="{{ sem }}" {% if sem == request.args.get('semester') %}selected{% endif %}>{{ sem }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Batch Filter -->
+                    <div class="form-group col-md-3">
+                        <label for="batch">Batch:</label>
+                        <select name="batch" id="batch" class="form-control">
+                            <option value="">All Batches</option>
+                            {% for bat in batches %}
+                                <option value="{{ bat }}" {% if bat == request.args.get('batch') %}selected{% endif %}>{{ bat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Department Filter -->
+                    <div class="form-group col-md-3">
+                        <label for="department">Department:</label>
+                        <select name="department" id="department" class="form-control">
+                            <option value="">All Departments</option>
+                            {% for dept in departments %}
+                                <option value="{{ dept }}" {% if dept == request.args.get('department') %}selected{% endif %}>{{ dept }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Student ID Filter -->
+                    <div class="form-group col-md-3">
+                        <label for="student_id">Student ID:</label>
+                        <input type="text" name="student_id" id="student_id" class="form-control" value="{{ request.args.get('student_id') }}">
+                    </div>
+                </div>
+
+                <!-- Filter Button -->
+                <button type="submit" class="btn btn-primary btn-block">Filter</button>
+            </form>
+
+            <!-- Student Attendance Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Class Name</th>
+                            <th>Total Classes</th>
+                            <th>Attended Classes</th>
+                            <th>Attendance Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in attendance_records %}
+                            <tr>
+                                <td>{{ record.student_id }}</td>
+                                <td>{{ record.student_name }}</td>
+                                <td>{{ record.class_name }}</td>
+                                <td>{{ record.total_classes }}</td>
+                                <td>{{ record.attended_classes }}</td>
+                                <td>{{ record.attendance_percentage }}%</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">No records found</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

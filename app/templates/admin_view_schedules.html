@@ -1,0 +1,107 @@
+{% extends 'layout.html' %}
+
+{% block title %}Admin View Schedules{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="jumbotron">
+        
+         <!-- Back Button -->
+<a href="{{ url_for('main.admin_dashboard') }}" class="back-button">
+    <i class="fas fa-arrow-left"></i> <!-- Back icon -->
+</a>
+        <h1 class="display-4">View All Schedules</h1>
+        <hr class="my-4">
+
+        <!-- Filter Form -->
+        <form method="GET" action="{{ url_for('main.admin_view_schedules') }}" class="mb-4">
+            <div class="form-row">
+                <!-- Department Filter -->
+                <div class="form-group col-md-3">
+                    <label for="department">Department:</label>
+                    <select id="department" name="department" class="form-control">
+                        <option value="">Select Department (if applicable)</option>
+                        {% for department in departments %}
+                            <option value="{{ department }}" {% if request.args.get('department') == department %}selected{% endif %}>{{ department }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Semester Filter -->
+                <div class="form-group col-md-3">
+                    <label for="semester">Semester:</label>
+                    <select id="semester" name="semester" class="form-control">
+                        <option value="">Select Semester (if applicable)</option>
+                        {% for semester in semesters %}
+                            <option value="{{ semester }}" {% if request.args.get('semester') == semester %}selected{% endif %}>{{ semester }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Batch Filter -->
+                <div class="form-group col-md-3">
+                    <label for="batch">Batch:</label>
+                    <select id="batch" name="batch" class="form-control">
+                        <option value="">Select Batch (if applicable)</option>
+                        {% for batch in batches %}
+                            <option value="{{ batch }}" {% if request.args.get('batch') == batch %}selected{% endif %}>{{ batch }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Teacher Filter -->
+                <div class="form-group col-md-3">
+                    <label for="teacher_id">Teacher:</label>
+                    <select id="teacher_id" name="teacher_id" class="form-control">
+                        <option value="">Select Teacher (if applicable)</option>
+                        {% for teacher in teachers %}
+                            <option value="{{ teacher }}" {% if request.args.get('teacher_id') == teacher %}selected{% endif %}>{{ teacher }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Button -->
+            <button type="submit" class="btn btn-primary btn-block">Filter</button>
+        </form>
+
+        <!-- Schedule Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Time / Day</th>
+                        {% for day in days %}
+                            <th>{{ day }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for period in periods %}
+                        <tr>
+                            <td>{{ period }}</td>
+                            {% for day in days %}
+                                <td>
+                                    {% if schedule[day][period] %}
+                                        {% for entry in schedule[day][period] %}
+                                            <div>
+                                                <strong>Classroom:</strong> {{ entry.classroom }}<br>
+                                                <strong>Teacher ID:</strong> {{ entry.teacher_id }}<br>
+                                                <a href="{{ url_for('main.edit_schedule', entry_id=entry.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                                <a href="{{ url_for('main.delete_schedule', entry_id=entry.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this schedule?');">Delete</a>
+                                            </div>
+                                            <hr>
+                                        {% endfor %}
+                                    {% else %}
+                                        No class scheduled
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

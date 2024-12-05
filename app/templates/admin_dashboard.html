@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Admin Dashboard
+{% endblock %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Admin Dashboard</h1>
+    
+    <div id="dashboard-container" class="list-group">
+        <!-- Create Schedule Link -->
+        <a href="{{ url_for('main.create_schedule') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-calendar-plus"></i> Create Schedule
+        </a>
+
+        <!-- View Schedules Link -->
+        <a href="{{ url_for('main.admin_view_schedules') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-eye"></i> View Schedules
+        </a>
+
+        <!-- View Student Attendance Link -->
+        <a href="{{ url_for('main.view_all_student_attendance') }}" class="list-group-item list-group-item-action">
+            <i class="fas fa-users"></i> View All Student Attendance
+        </a>
+
+        <!-- Train Model Option Form -->
+        <form method="POST" class="list-group-item list-group-item-action">
+            <div class="toggle-switch">
+                <i class="fas fa-cogs"></i>
+                <label class="mr-3">Tune Model Option:</label>
+                <input type="submit" class="btn btn-primary" value="{{ 'Disable' if train_model_toggle.is_enabled else 'Enable' }}">
+            </div>
+        </form>        
+    </div>
+{% endblock %}
