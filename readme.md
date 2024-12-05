@@ -207,4 +207,12 @@ smart_attendance_system/
 
 ---
 
+### YouTube Demonstration
+
+To see the **Smart Attendance System** in action, check out the YouTube video demonstration. This video showcases the working features of the system, including student and teacher functionalities.
+
+[**Smart Attendance System Demo - YouTube**](https://www.youtube.com/watch?v=eTwZmCxhlwk)
+
+---
+
 Now you're ready to explore the Smart Attendance System! 🚀
